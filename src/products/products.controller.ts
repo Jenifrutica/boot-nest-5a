@@ -32,20 +32,29 @@ export class ProductsController {
     @Get('id/:id')
     getProductById(@Param('id') id: string) {
         const product = this.products.find(product => product.id === id);
-        return product || 'product not found';
+        if (!product) {
+            return 'Product not found';
+        }
+        return product;
     }
 
     @Get('stock/out-of-stock')
     getOutOfStockProducts() {
         const outOfStock = this.products.filter(product => product.stock === 0);
-        return outOfStock.length > 0 ? outOfStock : 'No products out of stock';
+        if (outOfStock.length === 0) {
+            return 'Product not found';
+        }
+        return outOfStock;
     }
 
     @Get('expiration/expired')
     getExpiredProducts() {
         const currentDate = new Date();
         const expired = this.products.filter(product => new Date(product.expirationDate) < currentDate);
-        return expired.length > 0 ? expired : 'No expired products';
+        if (expired.length === 0) {
+            return 'Product not found';
+        }
+        return expired;
     }
 
     @Get('category/:category')
@@ -53,7 +62,10 @@ export class ProductsController {
         const filtered = this.products.filter(
             product => product.category.toLowerCase() === category.toLowerCase()
         );
-        return filtered.length > 0 ? filtered : 'Products not found in this category';
+        if (filtered.length === 0) {
+            return 'Product not found';
+        }
+        return filtered;
     }
 
 }
