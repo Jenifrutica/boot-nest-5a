@@ -1,4 +1,4 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, Param, Post, Body, Delete, Put, Patch } from '@nestjs/common';
 
 interface Product {
     id: string;
@@ -66,6 +66,52 @@ export class ProductsController {
             return 'Product not found';
         }
         return filtered;
+    }
+
+
+
+
+    @Post()
+    createProduct(@Body() product: Product) {
+        console.log('.:: product', product);
+        this.products.push(product);
+        return {
+            msg: 'Product created successfully',
+            data: product,
+        };
+    }
+
+    @Delete(':id')
+    deleteProduct(@Param('id') id: string) {
+        const index = this.products.findIndex((p) => p.id === id);
+        if (index === -1) {
+            return 'Product not found';
+        }
+        this.products.splice(index, 1);
+        return {
+            msg: 'Product deleted successfully',
+        };
+    }
+
+
+    @Put(':id')
+    updateProduct(@Param('id') id: string, @Body() productChanges: Product) {
+        console.log('.:: UserID Update', id);
+        console.log('.:: UserChanges Update', productChanges);
+        const index = this.products.findIndex((p) => p.id === id);
+        if (index === -1) {
+            return 'Product not found';
+        }
+        const existingProduct = this.products[index];
+        console.log('.:: Existing Product', existingProduct);
+
+        const updatedProduct = { ...existingProduct, ...productChanges };
+        this.products[index] = updatedProduct;
+
+        return {
+            msg: 'Product updated successfully',
+            data: updatedProduct,
+        };
     }
 
 }
