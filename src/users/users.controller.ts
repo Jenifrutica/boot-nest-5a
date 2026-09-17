@@ -50,15 +50,21 @@ export class UsersController {
       throw new UnprocessableEntityException('Invalid email format');
     }
 
+    const newUser = {
+      ...user,
+      id: `${new Date().getTime()}`,
+    }
+
+    this.users.push(newUser);
+
     const exists = this.users.find((u) => u.id === user.id || u.email === user.email);
     if (exists) {
       throw new ForbiddenException('The user is already registered');
     }
 
-    this.users.push(user);
     return {
       msg: 'User created successfully',
-      data: user,
+      data: newUser,
     };
   }
 
